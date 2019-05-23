@@ -1,0 +1,48 @@
+---
+- set_fact:
+    install_name: 'VirtualBox-6.0'
+    vbox_group: 'vboxusers'
+
+- name: "Configure virtual box repo"
+  get_url:
+    url: http://download.virtualbox.org/virtualbox/rpm/fedora/virtualbox.repo
+    dest: /etc/yum.repos.d/virtualbox.repo
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Upgrade all packages
+  yum:
+    name: '*'
+    state: latest
+
+- name: Install the '@Development tools' package group
+  yum:
+    name: "@development tools"
+    state: present
+
+- name: "Install dependencies"
+  yum:
+    name: "{{ deps }}"
+    state: present
+  vars:
+    deps:
+      - kernel-devel
+      - kernel-headers
+      - dkms
+      - qt5-qtx11extras
+      - elfutils-libelf-devel
+      - zlib-devel
+
+- name: "Install {{ install_name }}"
+  yum:
+    name: "{{ install_name }}"
+    state: present
+
+- name: "Add {{ host_user }} to {{ vbox_group }} group"
+  user:
+    name: "{{ host_user }}"
+    state: present
+    shell: /bin/bash
+    groups: "{{ vbox_group }}"
+    append: true

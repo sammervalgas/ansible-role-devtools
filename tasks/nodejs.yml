@@ -1,0 +1,20 @@
+---
+- name: 'NODEJS: ({{ ansible_os_family | lower }}) Install dependencies'
+  become: yes
+  package:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - gcc-c++
+    - make
+    - curl
+- name: 'NODEJS: Setup stable release'
+  shell: 'curl -sL https://rpm.nodesource.com/setup_10.x | sudo -E bash -'
+
+- name: 'NODEJS: Install tool'
+  become: yes
+  yum:
+    name: nodejs
+    state: present
+
+# - name: "NODEJS: Validate node endpoint"

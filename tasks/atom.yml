@@ -1,0 +1,29 @@
+---
+- name: "ATOM: ({{ ansible_os_family | lower }}) Install deps"
+  become: yes
+  package:
+    name: libselinux-python
+    state: present
+
+# - name: 'ATOM: Copy atom to tmp'
+#   copy:
+#     src: "{{role_path}}/files/atom.x86_64.rpm"
+#     dest: /tmp/atom.x86_64.rpm
+#     mode: 0774
+
+- name: "Download atom rpm into tmp"
+  get_url:
+    url: "https://atom.io/download/rpm"
+    dest: "/tmp/atom.x86_64.rpm"
+    mode: 0774
+
+- name: "ATOM: Install atom"
+  become: yes
+  package:
+    name: /tmp/atom.x86_64.rpm
+    state: present
+
+- name: 'ATOM: Remove atom of tmp'
+  file:
+    path: /tmp/atom.x86_64.rpm
+    state: absent

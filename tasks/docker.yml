@@ -1,0 +1,77 @@
+---
+- name: Ensure old versions of Docker are not installed.
+  package:
+    name:
+      - docker
+      - docker-common
+      - docker-engine
+    state: absent
+
+- name: Add Docker GPG key.
+  rpm_key:
+    key: https://download.docker.com/linux/fedora/gpg
+    state: present
+
+- name: Add Docker repository.
+  get_url:
+    url: "https://download.docker.com/linux/fedora/docker-ce.repo"
+    dest: '/etc/yum.repos.d/docker-ce.repo'
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Configure Docker Edge repo.
+  ini_file:
+    dest: '/etc/yum.repos.d/docker-ce.repo'
+    section: 'docker-ce-edge'
+    option: enabled
+    value: '0'
+
+- name: Configure Docker Test repo.
+  ini_file:
+    dest: '/etc/yum.repos.d/docker-ce.repo'
+    section: 'docker-ce-test'
+    option: enabled
+    value: '0'
+
+- name: Install Docker.
+  package:
+    name: "docker-ce"
+    state: "present"
+  notify: restart docker
+
+- name: Ensure Docker is started and enabled at boot.
+  service:
+    name: docker
+    state: "started"
+    enabled: "true"
+
+- name: Ensure handlers are notified now to avoid firewall conflicts.
+  meta: flush_handlers
+
+- name: Check current docker-compose version.
+  command: docker-compose --version
+  register: docker_compose_current_version
+  changed_when: false
+  failed_when: false
+
+- name: Delete existing docker-compose version if it's different.
+  file:
+    path: "/usr/local/bin/docker-compose"
+    state: absent
+  when: >
+    docker_compose_current_version.stdout is defined
+    and docker_compose_version not in docker_compose_current_version.stdout
+
+- name: Install Docker Compose (if configured).
+  get_url:
+    url: https://github.com/docker/compose/releases/download/1.22.0/docker-compose-Linux-x86_64
+    dest: "/usr/local/bin/docker-compose"
+
+- name: Ensure docker users are added to the docker group.
+  user:
+    name: "{{ item }}"
+    groups: docker
+    append: true
+  with_items:
+    - "{{ host_user }}"

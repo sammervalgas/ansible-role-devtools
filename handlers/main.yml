@@ -1,0 +1,6 @@
+---
+# handlers file for sammervalgas.ansible_devtools
+- name: restart docker
+  service:
+    name: docker
+    state: restarted

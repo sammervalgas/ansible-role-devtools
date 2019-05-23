@@ -1,0 +1,5 @@
+---
+# vars file for sammervalgas.ansible_devtools
+host_user: "{{ lookup('env','USER') }}"
+cordova_version: 'latest'
+ionic_version: 'latest'

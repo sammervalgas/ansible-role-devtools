@@ -1,0 +1,56 @@
+---
+- set_fact:
+    maven_version:  '3.6.0'
+    maven_base_dir: /opt/maven
+    maven_env_name: MAVEN_HOME
+
+- name: "Ensure java is installed"
+  include_tasks: java.yml
+
+- name: Checking if Maven is already installed
+  stat:
+    path: "{{ maven_base_dir }}/apache-maven-{{maven_version}}"
+  register: maven_is_installed
+
+- block:
+  - name: "Create installation folder and .m2 repository"
+    file:
+      path: "{{item}}"
+      state: directory
+      recurse: yes
+      mode: 0775
+    with_items:
+      - "{{ lookup('env','HOME') }}/.m2/repository"
+      - "{{ maven_base_dir }}"
+
+  - name: "Download apache-maven-{{maven_version}} into {{maven_base_dir}}"
+    get_url:
+      url: "http://www-eu.apache.org/dist/maven/maven-3/{{maven_version}}/binaries/apache-maven-{{maven_version}}-bin.tar.gz"
+      dest: "/tmp/apache-maven-{{maven_version}}.tar.gz"
+      mode: 0664
+
+  - name: "Unarchive maven file"
+    unarchive:
+      src: "/tmp/apache-maven-{{maven_version}}.tar.gz"
+      dest: "{{maven_base_dir}}"
+      owner: root
+      group: root
+      mode: 0775
+
+  - name: "Configure environment variable"
+    become: yes
+    lineinfile:
+      dest: "/etc/profile.d/maven.sh"
+      line: "{{ item }}"
+      state: present
+      create: yes
+    with_items:
+      - "export {{maven_env_name}}={{maven_base_dir}}/apache-maven-{{maven_version}}"
+      - 'export PATH=$PATH:${{maven_env_name}}/bin'
+
+  - name: "Clean trash"
+    file:
+      path: /tmp/apache-maven-{{maven_version}}.tar.gz
+      state: absent
+
+  when: maven_is_installed.stat.exists == false

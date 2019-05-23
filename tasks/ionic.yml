@@ -1,0 +1,23 @@
+---
+- name: "Ensure nodejs is installed"
+  include_tasks: nodejs.yml
+  tags:
+    - ionic
+
+- name: "Install cordova"
+  become: yes
+  npm:
+    name: cordova
+    state: present
+    global: yes
+    version: "{{ cordova_version | default('latest') }}"
+  tags: ionic
+
+- name: "Install ionic"
+  become: yes
+  npm:
+    name: ionic
+    state: present
+    global: yes
+    version: "{{ ionic_version | default('latest') }}"
+  tags: ionic

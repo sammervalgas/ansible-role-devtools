@@ -1,0 +1,6 @@
+---
+- name: "GUAKE: Install guake terminal"
+  become: yes
+  package:
+    name: guake
+    state: present

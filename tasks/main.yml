@@ -1,0 +1,41 @@
+---
+# tasks file for sammervalgas.ansible_devtools
+# - name: "Create a 2048-bit SSH key for user {{ host_user }} in ~/.ssh/id_rsa"
+#   user:
+#     name: "{{ host_user }}"
+#     generate_ssh_key: yes
+#     ssh_key_bits: 2048
+#     ssh_key_file: ~/.ssh/id_rsa_ansible_devtools
+#   tags: ssh_keygen
+
+- import_tasks: guake.yml
+  tags: guake
+
+- import_tasks: atom.yml
+  tags: atom
+
+- import_tasks: nodejs.yml
+  tags: nodejs
+
+- import_tasks: ionic.yml
+  tags: ionic
+
+- import_tasks: java.yml
+  tags: java
+
+- import_tasks: maven.yml
+  tags:
+    - maven
+
+- import_tasks: gradle.yml
+  tags:
+    - gradle
+
+- import_tasks: android.yml
+  tags: android
+
+- import_tasks: docker.yml
+  tags: docker
+
+- import_tasks: virtualbox.yml
+  tags: virtualbox
