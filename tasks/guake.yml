@@ -1,6 +1,20 @@
 ---
-- name: "GUAKE: Install guake terminal"
+- name: "Update packages and repositories"
+  yum:
+    name: "{{item.name}}"
+    state: "{{item.state}}"
+  with_items:
+    - { name: '*' , state: latest }
+    - { name: 'epel-release' , state: present }
+    - { name: 'guake' , state: present }
+  when: ansible_os_family | lower == 'redhat'
+
+- name: "GUAKE: Install guake terminal on {{ansible_os_family}}"
+  apt:
+    name: "{{item.name}}"
+    state: "{{item.state}}"
+  with_items:
+    - { name: '*' , state: latest }
+    - { name: 'guake' , state: present }
   become: yes
-  package:
-    name: guake
-    state: present
+  when: ansible_os_family | lower == 'debian'

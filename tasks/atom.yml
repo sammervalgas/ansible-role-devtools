@@ -23,7 +23,7 @@
     name: /tmp/atom.x86_64.rpm
     state: present
 
-- name: 'ATOM: Remove atom of tmp'
+- name: 'ATOM: Eliminate temporary files'
   file:
     path: /tmp/atom.x86_64.rpm
     state: absent

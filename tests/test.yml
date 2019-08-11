@@ -1,7 +1,5 @@
 ---
 - hosts: localhost
-  # remote_user: root
   become: yes
   roles:
     - ansible-role-devtools
-    # - ansible-role-intellij

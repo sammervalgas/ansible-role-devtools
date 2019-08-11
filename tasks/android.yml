@@ -10,7 +10,7 @@
 # TODO Finalizar
 - set_fact:
     android_base_dir: /opt/android/android-sdk-linux
-    android_from_source: false
+    android_from_source: true
     plaform_tool: platforms\;android-28
     build_tool: build-tools\;28.0.3
 
@@ -21,7 +21,7 @@
   yum:
     name: "{{ item }}"
     state: present
-  loop:
+  with_items:
     - zlib.i686
     - ncurses-libs.i686
     - bzip2-libs.i686

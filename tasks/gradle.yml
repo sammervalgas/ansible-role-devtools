@@ -43,7 +43,7 @@
     group: root
     mode: 0775
 
-- name: "Clean installation file"
+- name: "GRADLE: Eliminate temporary files"
   file:
     path: "/tmp/{{gradle_version}}-bin.zip"
     state: absent

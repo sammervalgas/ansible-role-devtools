@@ -2,37 +2,51 @@
 - set_fact:
     install_name: 'VirtualBox-6.0'
     vbox_group: 'vboxusers'
+    host_user: "{{ lookup('env', 'USER') }}"
 
-- name: "Configure virtual box repo"
+- name: "Install packages and repositories"
+  yum:
+    name: "{{ item.name }}"
+    state: "{{ item.state }}"
+  with_items:
+      - {name: '*' , state: 'latest'}
+#      - {name: '@development tools', state: 'present'}
+      - {name: 'make', state: 'present'}
+      - {name: 'gcc', state: 'present'}
+      - {name: 'perl', state: 'present'}
+      - {name: 'kernel-devel', state: 'present'}
+      - {name: 'kernel-headers', state: 'present'}
+      - {name: 'dkms', state: 'present'}
+      - {name: 'qt5-qtx11extras', state: 'present'}
+      - {name: 'elfutils-libelf-devel', state: 'present'}
+      - {name: 'zlib-devel', state: 'present'}
+  when: ansible_os_family | lower == 'redhat'
+
+- name: "Clean old repo file"
+
+- name: "Configure virtual box repo - {{ansible_distribution}}"
   get_url:
-    url: http://download.virtualbox.org/virtualbox/rpm/fedora/virtualbox.repo
+    url: "http://download.virtualbox.org/virtualbox/rpm/fedora/virtualbox.repo"
     dest: /etc/yum.repos.d/virtualbox.repo
     owner: root
     group: root
-    mode: 0644
+    mode: 0655
+  when: ansible_distribution | lower == 'fedora'
 
-- name: Upgrade all packages
-  yum:
-    name: '*'
-    state: latest
-
-- name: Install the '@Development tools' package group
-  yum:
-    name: "@development tools"
+- name: Add GPG key.
+  rpm_key:
+    key: https://www.virtualbox.org/download/oracle_vbox.asc
     state: present
+  when: ansible_distribution == 'centos'
 
-- name: "Install dependencies"
-  yum:
-    name: "{{ deps }}"
-    state: present
-  vars:
-    deps:
-      - kernel-devel
-      - kernel-headers
-      - dkms
-      - qt5-qtx11extras
-      - elfutils-libelf-devel
-      - zlib-devel
+- name: "Configure virtual box repo {{ansible_distribution}}"
+  get_url:
+    url: "http://download.virtualbox.org/virtualbox/rpm/el/virtualbox.repo"
+    dest: /etc/yum.repos.d/virtualbox.repo
+    owner: root
+    group: root
+    mode: 0655
+  when: ansible_distribution | lower == 'centos'
 
 - name: "Install {{ install_name }}"
   yum:

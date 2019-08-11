@@ -1,31 +1,72 @@
-Role Name
+Ansible role tools for development (Centos / Fedora / RHEL)
 =========
 
-A brief description of the role goes here.
+Ansible role contains the stacks:
+* [Git](https://git-scm.com/doc)
+* [Guake Terminal](http://guake-project.org/)
+* [Atom](https://atom.io/docs)
+* [NodeJS](https://nodejs.org/en/docs/)
+* [Ionic](https://ionicframework.com/)
+* [Java](https://www.oracle.com/technetwork/java/javase/downloads/index.html#JDK8)
+* [Maven](https://maven.apache.org/)
+* [Gradle](https://docs.gradle.org/current/userguide/userguide.html)
+* [Android SDK](https://developer.android.com/studio/intro/?gclid=CjwKCAjw1rnqBRAAEiwAr29IIzAZiW7pii526JbDGlPYaGb7ejrkUkOzn1BUd2JdON_OqTannmbswBoCa4UQAvD_BwE)
+* [Docker](https://docs.docker.com/)
+* [VirtualBox](https://www.virtualbox.org/)
+
 
 Requirements
 ------------
 
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
+Before start we configure the ansible hosts from local.
+```bash
+sudo /bin/bash -c 'echo -e "
+[localhost:vars] \n
+ansible_user=YOUR_USER \n
+ansible_pass=YOUR_PASS \n
+ansible_become=YOUR_SUDO_PASS \n
+ansible_port=22 \n
+ansible_connection=local \n
+
+[localhost]
+127.0.0.1 # localhost ip
+"' >> /etc/ansible/hosts
+```
+
+  >   IMPORTANT: If role not found enter the installation folder path of /etc/ansible/ansible.cfg in the argument roles_path:
+    Ex: My local roles path is ~/.ansible/roles/ then I had to do:
+
+```bash
+  # Append one line after roles_path into ansible.cfg
+  $ sed -i.$(date +%s).bkp '/roles_path/s/$/\:\~\/.ansible\/roles\//' /etc/ansible/ansible.cfg
+```
 
 Role Variables
 --------------
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
+TO BE DEFINED
 
 Dependencies
 ------------
-
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
+None:
 
 Example Playbook
 ----------------
 
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
+Enter inside role folder and create a symbolic link to your ansible roles path:
 
-    - hosts: servers
+Ex:
+```bash
+$ cd ansible-role-devtools; ln -s $PWD ~/.ansible/roles  
+
+$ ansible-playbook tests/test.yaml
+
+# If you just want one stack
+$ ansible-playbook tests/test.yaml --tags docker
+```
+    - hosts: localhost
       roles:
-         - { role: username.rolename, x: 42 }
+         - ansible-role-devtools
 
 License
 -------
@@ -35,4 +76,4 @@ BSD
 Author Information
 ------------------
 
-An optional section for the role authors to include contact information, or a website (HTML is not allowed).
+Sammer Valgas - XGH Expert
