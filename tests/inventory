@@ -1,1 +1,9 @@
+[localhost:vars]
+ansible_user=YOUR_USER
+ansible_pass=YOUR_PASS
+ansible_become=YOUR_SUDO_PASS
+ansible_port=22
+ansible_connection=local
+
 [localhost]
+127.0.0.1

@@ -18,6 +18,32 @@ Ansible role contains the stacks:
 Requirements
 ------------
 
+Install ansible:
+
+CentOS:
+
+```bash
+$ sudo yum update -y; yum install -y ansible
+```
+
+Ubuntu:
+
+```bash
+$ sudo apt-get install software-properties-common
+$ sudo apt-add-repository ppa:ansible/ansible
+$ sudo apt-get update
+$ sudo apt-get install ansible
+```
+
+Pip
+```bash
+$ sudo pip install ansible
+```
+
+
+
+---
+If you want to run locally (localhost) without setup inventory, follow next step:  
 Before start we configure the ansible hosts from local.
 ```bash
 sudo /bin/bash -c 'echo -e "
@@ -32,13 +58,14 @@ ansible_connection=local \n
 127.0.0.1 # localhost ip
 "' >> /etc/ansible/hosts
 ```
-
-  >   IMPORTANT: If role not found enter the installation folder path of /etc/ansible/ansible.cfg in the argument roles_path:
+---
+  > :warning:  ***IMPORTANT:***   
+  If role not found enter the installation folder path of /etc/ansible/ansible.cfg in the argument roles_path:
     Ex: My local roles path is ~/.ansible/roles/ then I had to do:
 
 ```bash
-  # Append one line after roles_path into ansible.cfg
-  $ sed -i.$(date +%s).bkp '/roles_path/s/$/\:\~\/.ansible\/roles\//' /etc/ansible/ansible.cfg
+# Append one line after roles_path argument into ansible.cfg
+$ sed -i.$(date +%s).bkp '/roles_path/s/$/\:\~\/.ansible\/roles\//' /etc/ansible/ansible.cfg
 ```
 
 Role Variables
@@ -55,19 +82,24 @@ Example Playbook
 
 Enter inside role folder and create a symbolic link to your ansible roles path:
 
-Ex:
-```bash
-$ cd ansible-role-devtools; ln -s $PWD ~/.ansible/roles  
+Run locally:
 
-$ ansible-playbook tests/test.yaml
+```bash
+$ git clone https://github.com/sammervalgas/ansible-role-devtools.git
+$ cd ansible-role-devtools; ln -s $PWD ~/.ansible/roles
+$ ansible-playbook -i tests/inventory tests/test.yaml
 
 # If you just want one stack
-$ ansible-playbook tests/test.yaml --tags docker
+$ ansible-playbook -i tests/inventory tests/test.yaml --tags docker
 ```
+---
+_Playbook_
+```yaml
+
     - hosts: localhost
       roles:
          - ansible-role-devtools
-
+```
 License
 -------
 
